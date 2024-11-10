@@ -39,6 +39,7 @@ export class UserController {
     this.userService.createUser(dto);
   }
 
+  @UsePipes(new ValidationPipe())
   @Put(':id')
   updatePassword(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,

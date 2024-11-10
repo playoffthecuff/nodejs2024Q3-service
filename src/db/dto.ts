@@ -1,9 +1,7 @@
-import { IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { Artist, User } from './types';
 
-export interface CreateUserDto {
-  login: string;
-  password: string;
-}
+export type CreateUserDto = Pick<User, 'login' | 'password'>;
 
 export class CreateUser implements CreateUserDto {
   @IsString() login: string;
@@ -18,4 +16,16 @@ export interface UpdatePasswordDto {
 export class UpdatePassword implements UpdatePasswordDto {
   oldPassword: string;
   newPassword: string;
+}
+
+export type ArtistDto = Omit<Artist, 'id'>;
+
+export class CreateArtist implements ArtistDto {
+  @IsString() name: string;
+  @IsBoolean() grammy: boolean;
+}
+
+export class UpdateArtist implements ArtistDto {
+  @IsOptional() @IsString() name: string;
+  @IsOptional() @IsBoolean() grammy: boolean;
 }
