@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   ParseUUIDPipe,
   Post,
@@ -47,6 +48,7 @@ export class UserController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   deleteUser(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     this.userService.deleteUser(id);
   }
