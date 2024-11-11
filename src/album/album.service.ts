@@ -1,5 +1,5 @@
 import {
-  ForbiddenException,
+  BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -26,7 +26,7 @@ export class AlbumService {
       dto.artistId &&
       !this.dbService.artists.find((v) => v.id === dto.artistId)
     )
-      throw new ForbiddenException();
+      throw new BadRequestException();
     const newAlbum: Album = {
       id: crypto.randomUUID(),
       name: dto.name,
@@ -40,7 +40,7 @@ export class AlbumService {
     const album = this.dbService.albums.find((a) => a.id === id);
     if (!album) throw new NotFoundException();
     const artist = this.dbService.artists.find((a) => a.id === dto.artistId);
-    if (!artist) throw new ForbiddenException();
+    if (!artist) throw new BadRequestException();
     Object.assign(album, dto);
   }
 
