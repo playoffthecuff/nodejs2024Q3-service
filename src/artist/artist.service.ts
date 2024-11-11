@@ -35,6 +35,16 @@ export class ArtistService {
   deleteArtist(id: string) {
     const artistIndex = this.dbService.artists.findIndex((a) => a.id === id);
     if (artistIndex === -1) throw new NotFoundException();
+    const favIndex = this.dbService.favorites.artists.findIndex(
+      (aId) => aId === id,
+    );
+    if (favIndex !== -1) this.dbService.favorites.artists.splice(favIndex, 1);
+    this.dbService.albums
+      .filter((a) => a.artistId === id)
+      .forEach((a) => (a.artistId = null));
+    this.dbService.tracks
+      .filter((t) => t.artistId === id)
+      .forEach((a) => (a.artistId = null));
     this.dbService.artists.splice(artistIndex, 1);
   }
 }

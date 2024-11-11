@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Album, Artist, Track, User } from './types';
+import { Album, Artist, Favorites, Track, User } from './types';
 
 @Injectable()
 export class DbService {
@@ -7,4 +7,5 @@ export class DbService {
   tracks: Track[] = [];
   artists: Artist[] = [];
   albums: Album[] = [];
+  favorites: Favorites = { artists: [], tracks: [], albums: [] };
 }

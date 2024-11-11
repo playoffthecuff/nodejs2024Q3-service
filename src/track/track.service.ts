@@ -55,6 +55,10 @@ export class TrackService {
   deleteTrack(id: string) {
     const trackIndex = this.dbService.tracks.findIndex((t) => t.id === id);
     if (trackIndex === -1) throw new NotFoundException();
+    const favIndex = this.dbService.favorites.tracks.findIndex(
+      (tId) => tId === id,
+    );
+    if (favIndex !== -1) this.dbService.favorites.tracks.splice(favIndex, 1);
     this.dbService.tracks.splice(trackIndex, 1);
   }
 }

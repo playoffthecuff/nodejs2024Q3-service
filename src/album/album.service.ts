@@ -47,6 +47,13 @@ export class AlbumService {
   deleteAlbum(id: string) {
     const albumIndex = this.dbService.albums.findIndex((a) => a.id === id);
     if (albumIndex === -1) throw new NotFoundException();
+    const favIndex = this.dbService.favorites.albums.findIndex(
+      (aId) => aId === id,
+    );
+    if (favIndex !== -1) this.dbService.favorites.albums.splice(favIndex, 1);
+    this.dbService.tracks
+      .filter((t) => t.albumId === id)
+      .forEach((t) => (t.albumId = null));
     this.dbService.albums.splice(albumIndex, 1);
   }
 }
