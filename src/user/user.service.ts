@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -26,18 +27,23 @@ export class UserService {
       id: crypto.randomUUID(),
       login: userDto.login,
       password: userDto.password,
-      version: 0,
+      version: 1,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
     this.dbService.users.push(newUser);
+    return newUser;
   }
 
   updatePassword(id: string, dto: UpdatePasswordDto) {
     const user = this.dbService.users.find((u) => u.id === id);
+    if (!dto.newPassword && !dto.oldPassword) throw new BadRequestException();
     if (!user) throw new NotFoundException();
     if (user.password !== dto.oldPassword) throw new ForbiddenException();
     user.password = dto.newPassword;
+    user.version++;
+    user.updatedAt = Date.now();
+    return user;
   }
 
   deleteUser(id: string) {

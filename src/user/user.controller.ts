@@ -33,19 +33,20 @@ export class UserController {
     return new UserEntity(this.userService.getUser(id));
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @UsePipes(new ValidationPipe())
   @Post()
   createUser(@Body() dto: CreateUser) {
-    this.userService.createUser(dto);
+    return new UserEntity(this.userService.createUser(dto));
   }
-
+  @UseInterceptors(ClassSerializerInterceptor)
   @UsePipes(new ValidationPipe())
   @Put(':id')
   updatePassword(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() dto: UpdatePassword,
   ) {
-    this.userService.updatePassword(id, dto);
+    return new UserEntity(this.userService.updatePassword(id, dto));
   }
 
   @Delete(':id')

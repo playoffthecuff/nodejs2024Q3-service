@@ -37,6 +37,7 @@ export class TrackService {
       albumId: dto.albumId ?? null,
     };
     this.dbService.tracks.push(newTrack);
+    return newTrack;
   }
 
   updateTrack(id: string, dto: TrackDto) {
@@ -50,6 +51,7 @@ export class TrackService {
     if (dto.albumId && !this.dbService.albums.find((a) => a.id === dto.albumId))
       throw new BadRequestException();
     Object.assign(track, dto);
+    return track;
   }
 
   deleteTrack(id: string) {

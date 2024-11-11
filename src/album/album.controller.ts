@@ -31,7 +31,7 @@ export class AlbumController {
   @UsePipes(new ValidationPipe())
   @Post()
   createAlbum(@Body() dto: CreateAlbum) {
-    this.albumService.createAlbum(dto);
+    return this.albumService.createAlbum(dto);
   }
 
   @UsePipes(new ValidationPipe())
@@ -40,7 +40,7 @@ export class AlbumController {
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() dto: UpdateAlbum,
   ) {
-    this.albumService.updateAlbum(id, dto);
+    return this.albumService.updateAlbum(id, dto);
   }
 
   @Delete(':id')

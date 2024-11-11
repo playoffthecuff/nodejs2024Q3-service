@@ -34,6 +34,7 @@ export class AlbumService {
       artistId: dto.artistId ?? null,
     };
     this.dbService.albums.push(newAlbum);
+    return newAlbum;
   }
 
   updateAlbum(id: string, dto: Partial<AlbumDto>) {
@@ -42,6 +43,7 @@ export class AlbumService {
     const artist = this.dbService.artists.find((a) => a.id === dto.artistId);
     if (!artist) throw new BadRequestException();
     Object.assign(album, dto);
+    return album;
   }
 
   deleteAlbum(id: string) {

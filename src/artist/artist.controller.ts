@@ -30,7 +30,7 @@ export class ArtistController {
   @UsePipes(new ValidationPipe())
   @Post()
   createArtist(@Body() dto: CreateArtist) {
-    this.artistService.createArtist(dto);
+    return this.artistService.createArtist(dto);
   }
 
   @UsePipes(new ValidationPipe())
@@ -39,7 +39,7 @@ export class ArtistController {
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() dto: UpdateArtist,
   ) {
-    this.artistService.updateArtist(id, dto);
+    return this.artistService.updateArtist(id, dto);
   }
 
   @Delete(':id')

@@ -18,18 +18,20 @@ export class ArtistService {
   }
 
   createArtist(dto: ArtistDto) {
-    const artist: Artist = {
+    const newArtist: Artist = {
       id: crypto.randomUUID(),
       name: dto.name,
       grammy: dto.grammy,
     };
-    this.dbService.artists.push(artist);
+    this.dbService.artists.push(newArtist);
+    return newArtist;
   }
 
   updateArtist(id: string, dto: Partial<ArtistDto>) {
     const artist = this.dbService.artists.find((a) => a.id === id);
     if (!artist) throw new NotFoundException();
     Object.assign(artist, dto);
+    return artist;
   }
 
   deleteArtist(id: string) {
