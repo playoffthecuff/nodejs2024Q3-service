@@ -3,14 +3,15 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Artist, Track, User } from './types';
-import { ArtistDto, CreateUserDto, UpdatePasswordDto } from './dto';
+import { Album, Artist, Track, User } from './types';
+import { AlbumDto, ArtistDto, CreateUserDto, UpdatePasswordDto } from './dto';
 
 @Injectable()
 export class DbService {
   users: User[] = [];
   tracks: Track[] = [];
   artists: Artist[] = [];
+  albums: Album[] = [];
 
   getUsers() {
     return this.users;
@@ -76,5 +77,41 @@ export class DbService {
     const artistIndex = this.artists.findIndex((a) => a.id === id);
     if (artistIndex === -1) throw new NotFoundException();
     this.artists.splice(artistIndex, 1);
+  }
+
+  getAlbums() {
+    return this.albums;
+  }
+
+  getAlbum(id: string) {
+    const album = this.albums.find((a) => a.id === id);
+    if (!album) throw new NotFoundException();
+    return album;
+  }
+
+  createAlbum(dto: AlbumDto) {
+    if (dto.artistId && !this.artists.find((v) => v.id === dto.artistId))
+      throw new ForbiddenException();
+    const newAlbum: Album = {
+      id: crypto.randomUUID(),
+      name: dto.name,
+      year: dto.year,
+      artistId: dto.artistId ?? null,
+    };
+    this.albums.push(newAlbum);
+  }
+
+  updateAlbum(id: string, dto: Partial<AlbumDto>) {
+    const album = this.albums.find((a) => a.id === id);
+    if (!album) throw new NotFoundException();
+    const artist = this.artists.find((a) => a.id === dto.artistId);
+    if (!artist) throw new ForbiddenException();
+    Object.assign(album, dto);
+  }
+
+  deleteAlbum(id: string) {
+    const albumIndex = this.albums.findIndex((a) => a.id === id);
+    if (albumIndex === -1) throw new NotFoundException();
+    this.albums.splice(albumIndex, 1);
   }
 }

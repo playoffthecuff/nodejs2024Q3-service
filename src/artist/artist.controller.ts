@@ -48,21 +48,3 @@ export class ArtistController {
     this.artistService.deleteArtist(id);
   }
 }
-
-// GET /artist - get all artists
-// Server should answer with status code 200 and all artists records
-// GET /artist/:id - get single artist by id
-// Server should answer with status code 200 and and record with id === artistId if it exists
-// Server should answer with status code 400 and corresponding message if artistId is invalid (not uuid)
-// Server should answer with status code 404 and corresponding message if record with id === artistId doesn't exist
-// POST /artist - create new artist
-// Server should answer with status code 201 and newly created record if request is valid
-// Server should answer with status code 400 and corresponding message if request body does not contain required fields
-// PUT /artist/:id - update artist info
-// Server should answer with status code 200 and updated record if request is valid
-// Server should answer with status code 400 and corresponding message if artist is invalid (not uuid)
-// Server should answer with status code 404 and corresponding message if record with id === artistId doesn't exist
-// DELETE /artist/:id - delete album
-// Server should answer with status code 204 if the record is found and deleted
-// Server should answer with status code 400 and corresponding message if artistId is invalid (not uuid)
-// Server should answer with status code 404 and corresponding message if record with id === artistId doesn't exist

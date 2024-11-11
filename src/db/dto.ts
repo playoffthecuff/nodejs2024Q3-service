@@ -1,5 +1,5 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
-import { Artist, User } from './types';
+import { IsBoolean, IsInt, IsOptional, IsString } from 'class-validator';
+import { Album, Artist, User } from './types';
 
 export type CreateUserDto = Pick<User, 'login' | 'password'>;
 
@@ -28,4 +28,18 @@ export class CreateArtist implements ArtistDto {
 export class UpdateArtist implements ArtistDto {
   @IsOptional() @IsString() name: string;
   @IsOptional() @IsBoolean() grammy: boolean;
+}
+
+export type AlbumDto = Omit<Album, 'id'>;
+
+export class CreateAlbum implements AlbumDto {
+  @IsString() name: string;
+  @IsInt() year: number;
+  @IsOptional() @IsString() artistId: string | null;
+}
+
+export class UpdateAlbum implements AlbumDto {
+  @IsOptional() @IsString() name: string;
+  @IsOptional() @IsInt() year: number;
+  @IsOptional() @IsString() artistId: string | null;
 }
