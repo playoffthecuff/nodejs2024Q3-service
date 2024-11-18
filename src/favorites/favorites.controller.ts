@@ -14,37 +14,45 @@ export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
   @Get()
-  getFavorites() {
-    return this.favoritesService.getFavorites();
+  async getFavorites() {
+    return await this.favoritesService.getFavorites();
   }
 
   @Post('track/:id')
-  addTrack(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    this.favoritesService.addTrack(id);
+  async addTrack(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+    await this.favoritesService.addTrack(id);
   }
   @Delete('track/:id')
   @HttpCode(204)
-  deleteTrack(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    this.favoritesService.deleteTrack(id);
+  async deleteTrack(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ) {
+    await this.favoritesService.deleteTrack(id);
   }
 
   @Post('album/:id')
-  addAlbum(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    this.favoritesService.addAlbum(id);
+  async addAlbum(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+    await this.favoritesService.addAlbum(id);
   }
   @Delete('album/:id')
   @HttpCode(204)
-  deleteAlbum(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    this.favoritesService.deleteAlbum(id);
+  async deleteAlbum(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ) {
+    await this.favoritesService.deleteAlbum(id);
   }
 
   @Post('artist/:id')
-  addArtist(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    this.favoritesService.addArtist(id);
+  async addArtist(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ) {
+    await this.favoritesService.addArtist(id);
   }
   @Delete('artist/:id')
   @HttpCode(204)
-  deleteArtist(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    this.favoritesService.deleteArtist(id);
+  async deleteArtist(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ) {
+    await this.favoritesService.deleteArtist(id);
   }
 }
