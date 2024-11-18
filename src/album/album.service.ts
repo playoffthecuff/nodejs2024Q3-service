@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AlbumDto } from 'src/db/dto';
 import { Album } from 'src/db/types';
@@ -26,6 +22,8 @@ export class AlbumService {
   }
 
   async create(dto: AlbumDto) {
+    const existedAlbum = await this.repository.findOneBy({ name: dto.name });
+    if (existedAlbum) return existedAlbum;
     const newAlbum: Album = {
       id: crypto.randomUUID(),
       name: dto.name,

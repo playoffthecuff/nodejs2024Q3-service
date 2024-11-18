@@ -37,6 +37,7 @@ export class FavoritesService {
         }),
       );
     }
+    delete favorites.id;
     return favorites;
   }
 

@@ -22,6 +22,8 @@ export class TrackService {
   }
 
   async create(dto: TrackDto) {
+    const existedTrack = await this.repository.findOneBy({ name: dto.name });
+    if (existedTrack) return existedTrack;
     const newTrack: Track = {
       id: crypto.randomUUID(),
       name: dto.name,
