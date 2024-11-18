@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.app
+    image: playoffthecuff779/app
     ports:
       - ${PORT}:${PORT}
     networks:
@@ -28,6 +29,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.db
+    image: playoffthecuff779/db
     ports:
       - ${DB_PORT}:${DB_PORT}
     networks:
