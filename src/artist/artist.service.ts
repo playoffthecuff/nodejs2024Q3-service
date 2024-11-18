@@ -37,8 +37,7 @@ export class ArtistService {
     const artist = await this.repository.findOneBy({ id });
     if (!artist) throw new NotFoundException();
     Object.assign(artist, dto);
-    const updatedUser = await this.repository.save(artist);
-    return updatedUser;
+    return await this.repository.save(artist);
   }
 
   async deleteArtist(id: string) {
