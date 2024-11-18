@@ -9,7 +9,7 @@ export interface User {
   updatedAt: number; // timestamp of last update
 }
 
-export class UserEntity implements User {
+export class UserResponse implements User {
   id: string;
   login: string;
   @Exclude() password: string;
@@ -17,7 +17,7 @@ export class UserEntity implements User {
   createdAt: number;
   updatedAt: number;
 
-  constructor(partial: Partial<UserEntity>) {
+  constructor(partial: Partial<UserResponse>) {
     Object.assign(this, partial);
   }
 }
