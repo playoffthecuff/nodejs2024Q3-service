@@ -41,7 +41,7 @@ export class ArtistController {
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() dto: UpdateArtist,
   ) {
-    return await this.artistService.updateArtist(id, dto);
+    return await this.artistService.update(id, dto);
   }
 
   @Delete(':id')
@@ -49,6 +49,6 @@ export class ArtistController {
   async deleteArtist(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ) {
-    await this.artistService.deleteArtist(id);
+    await this.artistService.remove(id);
   }
 }

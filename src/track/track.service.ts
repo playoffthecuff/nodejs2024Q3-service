@@ -1,34 +1,27 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { DbService } from 'src/db/db.service';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { TrackDto } from 'src/db/dto';
 import { Track } from 'src/db/types';
+import { TrackEntity } from './track.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TrackService {
-  constructor(private readonly dbService: DbService) {}
+  constructor(
+    @InjectRepository(TrackEntity) private repository: Repository<TrackEntity>,
+  ) {}
 
-  getTracks() {
-    return this.dbService.tracks;
+  async findAll() {
+    return await this.repository.find();
   }
 
-  getTrack(id: string) {
-    const track = this.dbService.tracks.find((t) => t.id === id);
+  async findOne(id: string) {
+    const track = await this.repository.findOneBy({ id });
     if (!track) throw new NotFoundException();
     return track;
   }
 
-  createTrack(dto: TrackDto) {
-    if (
-      dto.artistId &&
-      !this.dbService.artists.find((a) => a.id === dto.artistId)
-    )
-      throw new BadRequestException();
-    if (dto.albumId && !this.dbService.albums.find((a) => a.id === dto.albumId))
-      throw new BadRequestException();
+  async create(dto: TrackDto) {
     const newTrack: Track = {
       id: crypto.randomUUID(),
       name: dto.name,
@@ -36,31 +29,18 @@ export class TrackService {
       artistId: dto.artistId ?? null,
       albumId: dto.albumId ?? null,
     };
-    this.dbService.tracks.push(newTrack);
-    return newTrack;
+    return await this.repository.save(newTrack);
   }
 
-  updateTrack(id: string, dto: TrackDto) {
-    const track = this.dbService.tracks.find((t) => t.id === id);
+  async update(id: string, dto: TrackDto) {
+    const track = await this.repository.findOneBy({ id });
     if (!track) throw new NotFoundException();
-    if (
-      dto.artistId &&
-      !this.dbService.artists.find((a) => a.id === dto.artistId)
-    )
-      throw new BadRequestException();
-    if (dto.albumId && !this.dbService.albums.find((a) => a.id === dto.albumId))
-      throw new BadRequestException();
     Object.assign(track, dto);
-    return track;
+    return await this.repository.save(track);
   }
 
-  deleteTrack(id: string) {
-    const trackIndex = this.dbService.tracks.findIndex((t) => t.id === id);
-    if (trackIndex === -1) throw new NotFoundException();
-    const favIndex = this.dbService.favorites.tracks.findIndex(
-      (tId) => tId === id,
-    );
-    if (favIndex !== -1) this.dbService.favorites.tracks.splice(favIndex, 1);
-    this.dbService.tracks.splice(trackIndex, 1);
+  async remove(id: string) {
+    const result = await this.repository.delete(id);
+    if (result.affected === 0) throw new NotFoundException();
   }
 }

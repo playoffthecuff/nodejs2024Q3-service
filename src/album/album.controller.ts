@@ -20,18 +20,18 @@ export class AlbumController {
 
   @Get()
   async getAlbums() {
-    return await this.albumService.getAlbums();
+    return await this.albumService.findAll();
   }
 
   @Get(':id')
   async getAlbum(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    return await this.albumService.getAlbum(id);
+    return await this.albumService.findOne(id);
   }
 
   @UsePipes(new ValidationPipe())
   @Post()
   async createAlbum(@Body() dto: CreateAlbum) {
-    return await this.albumService.createAlbum(dto);
+    return await this.albumService.create(dto);
   }
 
   @UsePipes(new ValidationPipe())
@@ -40,7 +40,7 @@ export class AlbumController {
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() dto: UpdateAlbum,
   ) {
-    return await this.albumService.updateAlbum(id, dto);
+    return await this.albumService.update(id, dto);
   }
 
   @Delete(':id')
@@ -48,6 +48,6 @@ export class AlbumController {
   async deleteAlbum(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ) {
-    await this.albumService.deleteAlbum(id);
+    await this.albumService.remove(id);
   }
 }

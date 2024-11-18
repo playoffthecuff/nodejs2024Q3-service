@@ -33,14 +33,14 @@ export class ArtistService {
     return await this.repository.save(newArtist);
   }
 
-  async updateArtist(id: string, dto: Partial<ArtistDto>) {
+  async update(id: string, dto: Partial<ArtistDto>) {
     const artist = await this.repository.findOneBy({ id });
     if (!artist) throw new NotFoundException();
     Object.assign(artist, dto);
     return await this.repository.save(artist);
   }
 
-  async deleteArtist(id: string) {
+  async remove(id: string) {
     const result = await this.repository.delete(id);
     if (result.affected === 0) throw new NotFoundException();
   }
