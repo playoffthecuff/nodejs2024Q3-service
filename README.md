@@ -52,7 +52,7 @@ throw new Error()
 
 ```shell
 docker-compose down
-docker-compose up
+docker-compose up --build
 ```
 
 ### Application is restarting upon changes implemented into src folder - restart containers in watch mode
