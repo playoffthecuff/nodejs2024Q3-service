@@ -1,52 +1,47 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DbService } from 'src/db/db.service';
+import { InjectRepository } from '@nestjs/typeorm';
 import { ArtistDto } from 'src/db/dto';
 import { Artist } from 'src/db/types';
+import { ArtistEntity } from './artist.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ArtistService {
-  constructor(private readonly dbService: DbService) {}
+  constructor(
+    @InjectRepository(ArtistEntity)
+    private repository: Repository<ArtistEntity>,
+  ) {}
 
-  getArtists() {
-    return this.dbService.artists;
+  async findAll() {
+    return await this.repository.find();
   }
 
-  getArtist(id: string) {
-    const artist = this.dbService.artists.find((a) => a.id === id);
+  async findOne(id: string) {
+    const artist = await this.repository.findOneBy({ id });
     if (!artist) throw new NotFoundException();
     return artist;
   }
 
-  createArtist(dto: ArtistDto) {
+  async create(dto: ArtistDto) {
+    const existedArtist = await this.repository.findOneBy({ name: dto.name });
+    if (existedArtist) return existedArtist;
     const newArtist: Artist = {
       id: crypto.randomUUID(),
       name: dto.name,
       grammy: dto.grammy,
     };
-    this.dbService.artists.push(newArtist);
-    return newArtist;
+    return await this.repository.save(newArtist);
   }
 
-  updateArtist(id: string, dto: Partial<ArtistDto>) {
-    const artist = this.dbService.artists.find((a) => a.id === id);
+  async update(id: string, dto: Partial<ArtistDto>) {
+    const artist = await this.repository.findOneBy({ id });
     if (!artist) throw new NotFoundException();
     Object.assign(artist, dto);
-    return artist;
+    return await this.repository.save(artist);
   }
 
-  deleteArtist(id: string) {
-    const artistIndex = this.dbService.artists.findIndex((a) => a.id === id);
-    if (artistIndex === -1) throw new NotFoundException();
-    const favIndex = this.dbService.favorites.artists.findIndex(
-      (aId) => aId === id,
-    );
-    if (favIndex !== -1) this.dbService.favorites.artists.splice(favIndex, 1);
-    this.dbService.albums
-      .filter((a) => a.artistId === id)
-      .forEach((a) => (a.artistId = null));
-    this.dbService.tracks
-      .filter((t) => t.artistId === id)
-      .forEach((a) => (a.artistId = null));
-    this.dbService.artists.splice(artistIndex, 1);
+  async remove(id: string) {
+    const result = await this.repository.delete(id);
+    if (result.affected === 0) throw new NotFoundException();
   }
 }

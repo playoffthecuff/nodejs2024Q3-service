@@ -7,6 +7,9 @@ import { ArtistModule } from './artist/artist.module';
 import { TrackModule } from './track/track.module';
 import { AlbumModule } from './album/album.module';
 import { FavoritesModule } from './favorites/favorites.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from 'nestjs-config';
+import * as path from 'path';
 
 @Module({
   imports: [
@@ -16,6 +19,11 @@ import { FavoritesModule } from './favorites/favorites.module';
     TrackModule,
     AlbumModule,
     FavoritesModule,
+    ConfigModule.load(path.resolve(__dirname, 'config', '**/!(*.d).{ts,js}')),
+    TypeOrmModule.forRootAsync({
+      useFactory: (cfg: ConfigService) => cfg.get('db'),
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

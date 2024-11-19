@@ -4,30 +4,118 @@
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js 22.9.0 or higher](https://nodejs.org/en/download/) and the npm package manager.
+- Docker - [Download, install and run Docker Engine](https://docs.docker.com/engine/install/).
 
 ## Downloading
 
-```
+```shell
 git clone {repository URL}
+```
+
+## Switching to feature branch
+
+```shell
+git checkout containerization
 ```
 
 ## Installing NPM modules
 
-```
+```shell
 npm install
 ```
 
 ## Running application
 
-```
-npm start
+```shell
+docker-compose up -d
 ```
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
-## Using the application
+## Checking the application
+
+### Display detailed information on user-defined bridge
+
+```shell
+docker network inspect nodejs2024q3-service_app-db
+```
+
+### Container auto restart after crash - add unhandled error to the app entry point (./src/main.ts)
+
+```js
+throw new Error()
+```
+
+#### then rebuild & restart containers
+
+```shell
+docker-compose down
+docker-compose up --build
+```
+
+### Application is restarting upon changes implemented into src folder - restart containers in watch mode
+
+```shell
+docker-compose down
+docker-compose up --watch
+```
+
+#### then you can change something in ./src and watch logs in the terminal
+
+### Database files and logs to be stored in volumes instead of container
+
+- **see nodejs2024q3-service_db-data & nodejs2024q3-service_db-logs notes in the "volumes" table of Docker Desktop app**
+
+- **or find a container**
+
+```shell
+docker ps
+```
+
+- **and inspect it**
+
+```shell
+docker inspect playoffthecuff779/db
+```
+
+### Data is stored in PostgreSQL database and typeorm interacts with the database to manipulate data
+
+- **open Open API doc in the browser [http://localhost:4000/doc/](http://localhost:4000/doc/)**
+
+- **execute relevant queries**
+
+- **restart containers and ensure data integrity**
+
+- **check the source code to get acquainted with data interact methods**
+
+### Final size of the Docker image with application is less than 500 MB - find playoffthecuff779/app repository
+
+```shell
+docker images
+```
+
+### Implemented npm script for vulnerabilities scanning (free solution)
+
+```shell
+npm run scan
+```
+
+### Your built image is pushed to DockerHub
+
+- [app](https://hub.docker.com/repository/docker/playoffthecuff779/app)
+- [db](https://hub.docker.com/repository/docker/playoffthecuff779/db)
+
+### Variables used for connection to database to be stored in .env
+
+#### see .env (not ignored), Docker.app, Docker.db, compose.yaml in the root dir
+
+### typeorm decorators relations create relations between entities
+
+#### see *.entity.ts files
+
+### Using the application
 
 - Get all users:
 

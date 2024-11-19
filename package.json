@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "preinstall": "npx npm-force-resolutions",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -14,12 +15,14 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "scan": "docker scout cves",
     "test": "jest --testMatch \"<rootDir>/*.spec.ts\" --noStackTrace --runInBand",
     "test:auth": "cross-env TEST_MODE=auth jest --testPathIgnorePatterns refresh.e2e.spec.ts --noStackTrace --runInBand",
     "test:refresh": "cross-env TEST_MODE=auth jest --testPathPattern refresh.e2e.spec.ts --noStackTrace --runInBand",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "typeorm": "typeorm-ts-node-esm"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
@@ -28,15 +31,19 @@
     "@nestjs/mapped-types": "^1.0.1",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/swagger": "^5.2.1",
+    "@nestjs/typeorm": "^10.0.2",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "dotenv": "^16.0.1",
     "http-status-codes": "^2.2.0",
+    "nestjs-config": "^1.4.11",
+    "pg": "^8.13.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "swagger-ui-express": "^5.0.1",
+    "typeorm": "^0.3.20",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
@@ -57,13 +64,21 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.2.5",
+    "npm-force-resolutions": "^0.0.10",
     "prettier": "^2.3.2",
     "source-map-support": "^0.5.20",
     "supertest": "^6.2.3",
     "ts-jest": "^27.0.3",
     "ts-loader": "^9.2.3",
-    "ts-node": "^10.0.0",
+    "ts-node": "^10.9.2",
     "tsconfig-paths": "^3.10.1",
     "typescript": "^4.3.5"
+  },
+  "resolutions": {
+    "semver": "6.3.1",
+    "path-to-regexp": "3.3.0",
+    "terser": "5.14.2",
+    "body-parser": "1.20.3",
+    "class-validator": "0.14.0"
   }
 }

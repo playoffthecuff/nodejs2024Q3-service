@@ -4,51 +4,61 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { DbService } from 'src/db/db.service';
+import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto, UpdatePasswordDto } from 'src/db/dto';
 import { User } from 'src/db/types';
+import { UserEntity } from './user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly dbService: DbService) {}
+  constructor(
+    @InjectRepository(UserEntity)
+    private repository: Repository<UserEntity>,
+  ) {}
 
-  getUsers() {
-    return this.dbService.users;
+  async findAll() {
+    return await this.repository.find();
   }
 
-  getUser(id: string) {
-    const user = this.dbService.users.find((u) => u.id === id);
+  async findOne(id: string) {
+    const user = await this.repository.findOneBy({ id });
     if (!user) throw new NotFoundException();
     return user;
   }
 
-  createUser(userDto: CreateUserDto) {
+  async create(dto: CreateUserDto) {
+    const existedUser = await this.repository.findOneBy({
+      login: dto.login,
+    });
+    if (existedUser) return existedUser;
     const newUser: User = {
       id: crypto.randomUUID(),
-      login: userDto.login,
-      password: userDto.password,
+      login: dto.login,
+      password: dto.password,
       version: 1,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
-    this.dbService.users.push(newUser);
-    return newUser;
+    return await this.repository.save(newUser);
   }
 
-  updatePassword(id: string, dto: UpdatePasswordDto) {
-    const user = this.dbService.users.find((u) => u.id === id);
+  async update(id: string, dto: UpdatePasswordDto) {
     if (!dto.newPassword && !dto.oldPassword) throw new BadRequestException();
+    const user = await this.repository.findOneBy({ id });
     if (!user) throw new NotFoundException();
     if (user.password !== dto.oldPassword) throw new ForbiddenException();
     user.password = dto.newPassword;
     user.version++;
     user.updatedAt = Date.now();
-    return user;
+    const updatedUser = await this.repository.save(user);
+    updatedUser.createdAt = +updatedUser.createdAt;
+    updatedUser.updatedAt = +updatedUser.updatedAt;
+    return updatedUser;
   }
 
-  deleteUser(id: string) {
-    const userIndex = this.dbService.users.findIndex((u) => u.id === id);
-    if (userIndex === -1) throw new NotFoundException();
-    this.dbService.users.splice(userIndex, 1);
+  async remove(id: string) {
+    const result = await this.repository.delete(id);
+    if (result.affected === 0) throw new NotFoundException();
   }
 }
