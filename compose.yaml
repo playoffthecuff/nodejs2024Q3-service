@@ -1,7 +1,7 @@
 services:
   app:
     container_name: app
-    restart: on-failure
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile.app
@@ -21,7 +21,7 @@ services:
           target: /usr/app/src
   db:
     container_name: db
-    restart: on-failure
+    restart: always
     shm_size: 32mb
     volumes:
       - db-data:/var/libs/postgresql/data

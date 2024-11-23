@@ -6,6 +6,10 @@ import { readFileSync } from 'fs';
 import { load } from 'js-yaml';
 import { join } from 'path';
 import CustomFilter from './logging/exception.filter';
+import { LoggingService } from './logging/logging.service';
+
+LoggingService.subscribeToRejected();
+LoggingService.subscribeToUncaught();
 
 const PORT = process.env.PORT;
 

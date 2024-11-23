@@ -8,6 +8,12 @@ export type Log = {
   status: number;
 };
 
+export type ErrorLog = {
+  timestamp: string;
+  message: 'uncaught exception' | 'unhandled rejection';
+  error: string;
+};
+
 export function getLog(req: Request, res: Response): Log {
   const url = `${req.protocol}://${
     req.headers.host + req.originalUrl.split('?')[0]
@@ -25,7 +31,7 @@ export function getLog(req: Request, res: Response): Log {
   };
 }
 
-export function formatLog(log: Log) {
+export function formatLog(log: Log | ErrorLog) {
   try {
     return JSON.stringify(log, null, 2).replace(/^{|}$|"/g, '');
   } catch (error) {
