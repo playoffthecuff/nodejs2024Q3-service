@@ -7,18 +7,12 @@ export class LoggingService {
   private counter = 0;
   private path = resolve('logs', `app${this.counter}.log`);
 
-  logToConsole(m: any) {
-    console.table(m);
+  logToConsole(log: string) {
+    process.stdout.write(log);
   }
 
-  logToFile(m: any) {
-    let s: string;
-    try {
-      s = JSON.stringify(m, null, 2).replace(/^{|}$|"/g, '');
-    } catch (error) {
-      console.error(error);
-    }
-    appendFile(this.path, s, (e) => {
+  logToFile(log: string) {
+    appendFile(this.path, log, (e) => {
       if (e) console.error(e);
     });
   }

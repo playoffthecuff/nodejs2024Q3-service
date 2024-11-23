@@ -15,5 +15,5 @@ export default {
   migrations: ['dist/**/migration/*.js'],
   migrationsRun: true,
   autoLoadEntities: true,
-  logging: true,
+  logging: false,
 } as DataSourceOptions;

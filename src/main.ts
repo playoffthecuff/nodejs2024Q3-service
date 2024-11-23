@@ -5,6 +5,7 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { readFileSync } from 'fs';
 import { load } from 'js-yaml';
 import { join } from 'path';
+import CustomFilter from './logging/exception.filter';
 
 const PORT = process.env.PORT;
 
@@ -15,7 +16,7 @@ async function bootstrap() {
     readFileSync(join(__dirname, '../doc/api.yaml'), 'utf8'),
   );
   SwaggerModule.setup('doc', app, swaggerDocument);
-
+  app.useGlobalFilters(new CustomFilter());
   await app.listen(PORT);
 }
 bootstrap();
