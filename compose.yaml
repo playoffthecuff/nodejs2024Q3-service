@@ -6,6 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile.app
     image: playoffthecuff779/app
+    volumes:
+      - ./logs:/usr/app/logs
     ports:
       - ${PORT}:${PORT}
     networks:

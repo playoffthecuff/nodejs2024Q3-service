@@ -8,19 +8,19 @@ import { join } from 'path';
 import CustomFilter from './logging/exception.filter';
 import { LoggingService } from './logging/logging.service';
 
-LoggingService.subscribeToRejected();
-LoggingService.subscribeToUncaught();
-
-const PORT = process.env.PORT;
+const l = new LoggingService();
+l.subscribeToUncaught();
+l.subscribeToRejected();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { bufferLogs: true });
 
   const swaggerDocument = load(
     readFileSync(join(__dirname, '../doc/api.yaml'), 'utf8'),
   );
   SwaggerModule.setup('doc', app, swaggerDocument);
   app.useGlobalFilters(new CustomFilter());
-  await app.listen(PORT);
+  app.useLogger(app.get(LoggingService));
+  await app.listen(process.env.PORT ?? 4000);
 }
 bootstrap();

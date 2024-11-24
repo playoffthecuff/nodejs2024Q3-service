@@ -1,52 +1,62 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, LoggerService } from '@nestjs/common';
 import { appendFile } from 'fs';
 import { resolve } from 'path';
-import { ErrorLog, formatLog } from './helpers';
+import { ConsoleLevel, consoleLogger } from './helpers';
 
-const counter = 0;
-const path = resolve('logs', `app${counter}.log`);
+const LOGGING_LEVEL = process.env.LOGGING_LEVEL
+  ? +process.env.LOGGING_LEVEL
+  : 0;
+
+['log', 'warn', 'error'];
 
 @Injectable()
-export class LoggingService {
-  logToConsole(log: string) {
-    process.stdout.write(log);
-  }
+export class LoggingService implements LoggerService {
+  private counter = 0;
+  private path = resolve('logs', `app${this.counter}.log`);
 
-  logToFile(log: string) {
-    appendFile(path, log, (e) => {
+  private logTo(message: any, lvl: ConsoleLevel) {
+    const c = `timestamp: ${new Date().toUTCString()} | ${message}`;
+    const f = c + '\n';
+    consoleLogger(c, lvl);
+    appendFile(this.path, f, (e) => {
       if (e) console.error(e);
     });
   }
 
-  static subscribeToUncaught() {
+  subscribeToUncaught() {
     process.on('uncaughtException', (e) => {
-      const l: ErrorLog = {
-        timestamp: new Date().toUTCString(),
-        message: 'uncaught exception',
-        error: e.message,
-      };
-      const log = formatLog(l);
-      process.stdout.write(log);
-      appendFile(path, log, (e) => {
-        if (e) console.error(e);
-      });
-      process.exit(1);
+      if (LOGGING_LEVEL > 2) return;
+      const log = `uncaught exception: ${e.message}`;
+      this.error(log);
     });
   }
 
-  static subscribeToRejected() {
+  subscribeToRejected() {
     process.on('unhandledRejection', (r) => {
-      const l: ErrorLog = {
-        timestamp: new Date().toUTCString(),
-        message: 'unhandled rejection',
-        error: r instanceof Error ? r.message : JSON.stringify(r),
-      };
-      const log = formatLog(l);
-      process.stdout.write(log);
-      appendFile(path, log, (e) => {
-        if (e) console.error(e);
-      });
-      process.exit(1);
+      if (LOGGING_LEVEL > 2) return;
+      const log = `unhandled rejection: ${
+        r instanceof Error ? r.message : JSON.stringify(r)
+      }`;
+      this.error(log);
     });
+  }
+
+  log(message: any) {
+    this.logTo(message, 'log');
+  }
+
+  fatal(message: any) {
+    if (LOGGING_LEVEL > 2) return;
+    this.logTo(message, 'error');
+  }
+
+  error(message: any) {
+    if (LOGGING_LEVEL > 1) return;
+    this.logTo(message, 'warn');
+  }
+
+  warn(message: any) {
+    if (LOGGING_LEVEL > 0) return;
+    this.logTo(message, 'warn');
   }
 }

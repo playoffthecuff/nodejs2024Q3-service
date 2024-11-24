@@ -12,6 +12,7 @@ import { ConfigModule, ConfigService } from 'nestjs-config';
 import { LoggingService } from './logging/logging.service';
 import * as path from 'path';
 import { LoggingMiddleware } from './logging/logging.middleware';
+import { LoggingModule } from './logging/logging.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { LoggingMiddleware } from './logging/logging.middleware';
       useFactory: (cfg: ConfigService) => cfg.get('db'),
       inject: [ConfigService],
     }),
+    LoggingModule,
   ],
   controllers: [AppController],
   providers: [AppService, LoggingService],
