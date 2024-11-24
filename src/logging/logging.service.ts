@@ -1,62 +1,84 @@
 import { Injectable, LoggerService } from '@nestjs/common';
-import { appendFile } from 'fs';
+import { appendFile, readdir, stat } from 'fs';
 import { resolve } from 'path';
-import { ConsoleLevel, consoleLogger } from './helpers';
+import { consoleLogger, LoggingLevel } from './helpers';
 
-const LOGGING_LEVEL = process.env.LOGGING_LEVEL
+const LOGGING_LEVEL: LoggingLevel = process.env.LOGGING_LEVEL
   ? +process.env.LOGGING_LEVEL
   : 0;
 
-['log', 'warn', 'error'];
+const ROTATION_SIZE = process.env.ROTATION_SIZE
+  ? +process.env.ROTATION_SIZE
+  : 64;
 
 @Injectable()
 export class LoggingService implements LoggerService {
+  private dir = resolve('logs');
   private counter = 0;
-  private path = resolve('logs', `app${this.counter}.log`);
+  private path = resolve(this.dir, 'app0.log');
+  private fileSize = 0;
 
-  private logTo(message: any, lvl: ConsoleLevel) {
+  constructor() {
+    readdir(this.dir, (e, f) => {
+      if (e) console.error(e.message);
+      this.counter = Math.max(...f.map((v) => +v.replace(/[a-z.]/gi, '')));
+    });
+    this.path = resolve(this.dir, `app${this.counter}.log`);
+    stat(this.path, (e, s) => {
+      if (e) console.error(e.message);
+      this.fileSize = s.size;
+    });
+  }
+
+  private logTo(message: any, lvl: LoggingLevel) {
+    if (lvl > LOGGING_LEVEL) return;
     const c = `timestamp: ${new Date().toUTCString()} | ${message}`;
     const f = c + '\n';
     consoleLogger(c, lvl);
+    this.checkSize(f.length);
     appendFile(this.path, f, (e) => {
       if (e) console.error(e);
     });
   }
 
+  private checkSize(increment: number) {
+    if (this.fileSize + increment > ROTATION_SIZE * 2 ** 10) {
+      this.path = resolve(this.dir, `app${++this.counter}.log`);
+      this.fileSize = 0;
+    } else {
+      this.fileSize += increment;
+    }
+  }
+
   subscribeToUncaught() {
     process.on('uncaughtException', (e) => {
-      if (LOGGING_LEVEL > 2) return;
       const log = `uncaught exception: ${e.message}`;
-      this.error(log);
+      this.logTo(log, LoggingLevel.error);
     });
   }
 
   subscribeToRejected() {
     process.on('unhandledRejection', (r) => {
-      if (LOGGING_LEVEL > 2) return;
       const log = `unhandled rejection: ${
         r instanceof Error ? r.message : JSON.stringify(r)
       }`;
-      this.error(log);
+      this.logTo(log, LoggingLevel.error);
     });
   }
 
   log(message: any) {
-    this.logTo(message, 'log');
+    this.logTo(message, LoggingLevel.log);
   }
 
   fatal(message: any) {
-    if (LOGGING_LEVEL > 2) return;
-    this.logTo(message, 'error');
+    this.logTo(message, LoggingLevel.error);
   }
 
   error(message: any) {
-    if (LOGGING_LEVEL > 1) return;
-    this.logTo(message, 'warn');
+    this.logTo(message, LoggingLevel.warn);
   }
 
   warn(message: any) {
-    if (LOGGING_LEVEL > 0) return;
-    this.logTo(message, 'warn');
+    this.logTo(message, LoggingLevel.warn);
   }
 }

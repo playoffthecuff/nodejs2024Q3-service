@@ -7,7 +7,12 @@ export type Log = {
   status: number;
 };
 
-export type ConsoleLevel = 'info' | 'log' | 'warn' | 'error';
+export enum LoggingLevel {
+  log,
+  warn,
+  error,
+  fatal,
+}
 
 export function getLog(req: Request, res: Response, status?: number) {
   let body = '';
@@ -27,6 +32,6 @@ export function getLog(req: Request, res: Response, status?: number) {
   return `url: ${log.url} | params: ${log.params} | body: ${log.body} | status: ${log.status}`;
 }
 
-export function consoleLogger(msg: string, level: ConsoleLevel) {
-  console[level](msg);
+export function consoleLogger(msg: string, level: LoggingLevel) {
+  console[LoggingLevel[level]](msg);
 }
