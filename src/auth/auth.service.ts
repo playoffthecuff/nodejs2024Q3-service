@@ -1,7 +1,9 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/db/dto';
+import { User } from 'src/db/types';
 import { UserService } from 'src/user/user.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -26,19 +28,22 @@ export class AuthService {
       }),
     };
   }
-  // async create(dto: CreateUserDto) {
-  //   const existedUser = await this.repository.findOneBy({ login: dto.login });
-  //   if (existedUser) return existedUser;
-  //   const newUser: User = {
-  //     id: crypto.randomUUID(),
-  //     login: dto.login,
-  //     password: dto.password,
-  //     createdAt: Date.now(),
-  //     updatedAt: Date.now(),
-  //     version: 1,
-  //     accessToken: '',
-  //     refreshToken: '',
-  //   };
-  //   return this.repository.save(newUser);
-  // }
+
+  async signup(dto: CreateUserDto) {
+    const existedUser = await this.userService.findOneByLogin(dto.login);
+    if (existedUser) return existedUser;
+    const salt = await bcrypt.genSalt(
+      process.env.CRYPT_SALT ? +process.env.CRYPT_SALT : 10,
+    );
+    const password = await bcrypt.hash(dto.password, salt);
+    const newUser: User = {
+      id: crypto.randomUUID(),
+      login: dto.login,
+      password,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      version: 1,
+    };
+    return this.userService.save(newUser);
+  }
 }

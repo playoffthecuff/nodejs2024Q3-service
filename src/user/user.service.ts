@@ -41,6 +41,10 @@ export class UserService {
     return await this.repository.save(newUser);
   }
 
+  async save(user: User) {
+    return await this.repository.save(user);
+  }
+
   async findOneByLogin(login: string) {
     return this.repository.findOneBy({
       login,

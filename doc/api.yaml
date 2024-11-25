@@ -870,9 +870,9 @@ paths:
                 - login
                 - password
       responses:
-        204:
+        201:
           description: Successful signup
         400:
           description: Bad request
-        409:
-          description: Conflict. Login already exists
+        # 409:
+        #   description: Conflict. Login already exists
