@@ -23,6 +23,7 @@ export class AuthService {
     const user = await this.userService.findOneByLogin(dto.login);
     if (!user) throw new ForbiddenException();
     const compareResult = await bcrypt.compare(dto.password, user.password);
+    console.log(compareResult);
     if (!compareResult) throw new ForbiddenException();
     const payload: Payload = {
       sub: user.id,
@@ -68,7 +69,7 @@ export class AuthService {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { iat, exp, ...p } = payload;
       return this.generateTokens(p);
-    } catch (e) {
+    } catch {
       throw new ForbiddenException();
     }
   }
