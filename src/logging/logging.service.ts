@@ -21,7 +21,7 @@ export class LoggingService implements LoggerService {
   constructor() {
     readdir(this.dir, (e, f) => {
       if (e) console.error(e.message);
-      this.counter = Math.max(...f.map((v) => +v.replace(/[a-z.]/gi, '')));
+      this.counter = Math.max(...f.map((v) => +v.replace(/[a-z.]/gi, '')), 0);
     });
     this.path = resolve(this.dir, `app${this.counter}.log`);
     stat(this.path, (e, s) => {
