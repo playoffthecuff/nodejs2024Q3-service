@@ -1,26 +1,26 @@
 services:
-  app:
-    container_name: app
-    restart: always
-    build:
-      context: .
-      dockerfile: Dockerfile.app
-    image: playoffthecuff779/app
-    volumes:
-      - ./logs:/usr/app/logs
-    ports:
-      - ${PORT}:${PORT}
-    networks:
-      - app-db
-    depends_on:
-      - db
-    env_file:
-      - .env
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./src
-          target: /usr/app/src
+  # app:
+  #   container_name: app
+  #   restart: always
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.app
+  #   image: playoffthecuff779/app
+  #   volumes:
+  #     - ./logs:/usr/app/logs
+  #   ports:
+  #     - ${PORT}:${PORT}
+  #   networks:
+  #     - app-db
+  #   depends_on:
+  #     - db
+  #   env_file:
+  #     - .env
+  #   develop:
+  #     watch:
+  #       - action: sync+restart
+  #         path: ./src
+  #         target: /usr/app/src
   db:
     container_name: db
     restart: always
@@ -34,8 +34,8 @@ services:
     image: playoffthecuff779/db
     ports:
       - ${DB_PORT}:${DB_PORT}
-    networks:
-      - app-db
+    # networks:
+    #   - app-db
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PSWD}

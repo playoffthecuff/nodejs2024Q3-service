@@ -13,6 +13,7 @@ import { LoggingService } from './logging/logging.service';
 import * as path from 'path';
 import { LoggingMiddleware } from './logging/logging.middleware';
 import { LoggingModule } from './logging/logging.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { LoggingModule } from './logging/logging.module';
       inject: [ConfigService],
     }),
     LoggingModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, LoggingService],
