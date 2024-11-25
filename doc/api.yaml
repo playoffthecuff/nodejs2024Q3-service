@@ -876,3 +876,30 @@ paths:
           description: Bad request
         # 409:
         #   description: Conflict. Login already exists
+  /auth/refresh:
+    post:
+      tags:
+        - Refresh
+      security: [ ]
+      summary: Refresh
+      description: Refresh tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                refreshToken:
+                  type: string
+                  description: refresh token
+              required:
+                - refreshToken
+      responses:
+        200:
+          description: Successful refresh
+        401:
+          description: Bad request
+        403:
+          description: Invalid or expired token

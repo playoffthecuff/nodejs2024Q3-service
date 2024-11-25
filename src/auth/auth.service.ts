@@ -5,6 +5,13 @@ import { User } from 'src/db/types';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 
+type Payload = {
+  sub: string;
+  login: string;
+  iat?: string;
+  exp?: string;
+};
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -14,11 +21,18 @@ export class AuthService {
 
   async login(dto: CreateUserDto) {
     const user = await this.userService.findOneByLogin(dto.login);
-    if (!user || user.password !== dto.password) throw new ForbiddenException();
-    const payload = {
+    if (!user) throw new ForbiddenException();
+    const compareResult = await bcrypt.compare(dto.password, user.password);
+    if (!compareResult) throw new ForbiddenException();
+    const payload: Payload = {
       sub: user.id,
       login: user.login,
     };
+    return this.generateTokens(payload);
+  }
+
+  async generateTokens(payload: Payload) {
+    console.log(payload);
     return {
       accessToken: await this.jwtService.signAsync(payload, {
         expiresIn: process.env.TOKEN_EXPIRE_TIME ?? '1h',
@@ -45,5 +59,17 @@ export class AuthService {
       version: 1,
     };
     return this.userService.save(newUser);
+  }
+
+  async refresh(token: string) {
+    let payload: Payload;
+    try {
+      payload = await this.jwtService.verifyAsync(token);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { iat, exp, ...p } = payload;
+      return this.generateTokens(p);
+    } catch (e) {
+      throw new ForbiddenException();
+    }
   }
 }

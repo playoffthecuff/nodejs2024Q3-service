@@ -8,7 +8,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUser } from 'src/db/dto';
+import { CreateUser, RefreshToken } from 'src/db/dto';
 import { UserResponse } from 'src/db/types';
 
 @Controller('auth')
@@ -27,5 +27,11 @@ export class AuthController {
   @Post('login')
   login(@Body() dto: CreateUser) {
     return this.service.login(dto);
+  }
+
+  @UsePipes(new ValidationPipe())
+  @Post('refresh')
+  refresh(@Body() dto: RefreshToken) {
+    return this.service.refresh(dto.refreshToken);
   }
 }
