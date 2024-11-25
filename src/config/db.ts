@@ -5,7 +5,7 @@ dotenv.config();
 
 export default {
   type: 'postgres',
-  host: process.env.DB_HOST ?? 'db',
+  host: 'db',
   port: process.env.DB_PORT ? +process.env.DB_PORT : 5432,
   username: process.env.DB_USER ?? 'db_user',
   password: process.env.DB_PSWD ?? 'db_pswd',
@@ -15,5 +15,5 @@ export default {
   migrations: ['dist/**/migration/*.js'],
   migrationsRun: true,
   autoLoadEntities: true,
-  logging: true,
+  logging: false,
 } as DataSourceOptions;

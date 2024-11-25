@@ -28,9 +28,7 @@ export class UserService {
   }
 
   async create(dto: CreateUserDto) {
-    const existedUser = await this.repository.findOneBy({
-      login: dto.login,
-    });
+    const existedUser = await this.findOneByLogin(dto.login);
     if (existedUser) return existedUser;
     const newUser: User = {
       id: crypto.randomUUID(),
@@ -41,6 +39,16 @@ export class UserService {
       updatedAt: Date.now(),
     };
     return await this.repository.save(newUser);
+  }
+
+  async save(user: User) {
+    return await this.repository.save(user);
+  }
+
+  async findOneByLogin(login: string) {
+    return this.repository.findOneBy({
+      login,
+    });
   }
 
   async update(id: string, dto: UpdatePasswordDto) {

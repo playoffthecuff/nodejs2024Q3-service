@@ -8,6 +8,10 @@ export class CreateUser implements CreateUserDto {
   @IsString() password: string;
 }
 
+export class RefreshToken {
+  @IsString() refreshToken: string;
+}
+
 export interface UpdatePasswordDto {
   oldPassword: string; // previous password
   newPassword: string; // new password

@@ -1,11 +1,13 @@
 services:
   app:
     container_name: app
-    restart: on-failure
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile.app
     image: playoffthecuff779/app
+    volumes:
+      - ./logs:/usr/app/logs
     ports:
       - ${PORT}:${PORT}
     networks:
@@ -21,7 +23,7 @@ services:
           target: /usr/app/src
   db:
     container_name: db
-    restart: on-failure
+    restart: always
     shm_size: 32mb
     volumes:
       - db-data:/var/libs/postgresql/data
